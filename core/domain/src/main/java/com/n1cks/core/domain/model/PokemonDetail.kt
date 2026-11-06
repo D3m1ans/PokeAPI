@@ -1,6 +1,6 @@
 package com.n1cks.core.domain.model
 
-data class PokemonDetails(
+data class PokemonDetail(
     val id: Int,
     val name: String,
     val imageUrl: String,

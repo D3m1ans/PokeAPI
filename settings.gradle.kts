@@ -26,3 +26,4 @@ rootProject.name = "Pokeapi"
 include(":app")
 include(":core")
 include(":core:domain")
+include(":core:data")

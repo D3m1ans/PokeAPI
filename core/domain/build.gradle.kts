@@ -15,4 +15,6 @@ kotlin {
 dependencies {
     testImplementation(libs.junit)
     api(libs.kotlinx.coroutines.core)
+
+    implementation(libs.paging.compose)
 }
