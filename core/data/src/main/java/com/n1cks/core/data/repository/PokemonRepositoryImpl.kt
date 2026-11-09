@@ -31,7 +31,7 @@ class PokemonRepositoryImpl(
         ).flow.map { pagingData -> pagingData.map { it.toDomain() } }
     }
 
-    override suspend fun getPokemonDetails(id: Int): PokemonDetail?  =
+    override suspend fun getPokemonDetail(id: Int): PokemonDetail?  =
         try { api.getPokemon(id).toDomain() } catch (_: Exception) { null }
 
 
