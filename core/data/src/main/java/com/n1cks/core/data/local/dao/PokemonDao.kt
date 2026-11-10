@@ -2,13 +2,16 @@ package com.n1cks.core.data.local.dao
 
 import androidx.paging.PagingSource
 import androidx.room3.Dao
+import androidx.room3.DaoReturnTypeConverters
 import androidx.room3.Insert
 import androidx.room3.OnConflictStrategy
 import androidx.room3.Query
+import androidx.room3.paging.PagingSourceDaoReturnTypeConverter
 import com.n1cks.core.data.local.entity.PokemonEntity
 import kotlinx.coroutines.flow.Flow
 
 @Dao
+@DaoReturnTypeConverters(PagingSourceDaoReturnTypeConverter::class)
 interface PokemonDao {
     @Query("SELECT * FROM pokemon ORDER BY id ASC")
     fun pagingSource(): PagingSource<Int, PokemonEntity>
@@ -23,5 +26,5 @@ interface PokemonDao {
     suspend fun toggleFavorite(id: Int)
 
     @Query("SELECT id FROM pokemon WHERE isFavorite = 1")
-    fun favoriteIds(): Flow<Set<Int>>
+    fun favoriteIds(): Flow<List<Int>>
 }

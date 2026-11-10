@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class PokemonListResponse(
     val count: Int,
     val next: String?,
-    val result: List<PokemonSummaryDto>
+    val results: List<PokemonSummaryDto>
 )

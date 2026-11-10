@@ -37,6 +37,6 @@ class PokemonRepositoryImpl(
 
     override suspend fun toggleFavorite(id: Int) = dao.toggleFavorite(id)
 
-    override fun getFavoritesIds(): Flow<Set<Int>> = dao.favoriteIds()
+    override fun getFavoritesIds(): Flow<Set<Int>> = dao.favoriteIds().map { it.toSet() }
 
 }

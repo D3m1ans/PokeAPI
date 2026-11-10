@@ -1,7 +1,9 @@
 package com.n1cks.feratures.pokemonlist.ui.screen
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,11 +29,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import coil3.compose.AsyncImage
 import com.n1cks.core.domain.model.Pokemon
 import com.n1cks.feratures.pokemonlist.component.PokemonListComponent
-import java.nio.file.WatchEvent
 
 @Composable
 fun PokemonListScreen(

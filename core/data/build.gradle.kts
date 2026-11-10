@@ -28,7 +28,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
+
     implementation(libs.room.runtime)
+    implementation(libs.room.paging)
     ksp(libs.room.compiler)
 
     implementation(libs.retrofit)
@@ -38,7 +40,8 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
 
-    implementation(libs.paging.common)
+    implementation(libs.paging.runtime)
+    implementation(libs.paging.runtime.ktx)
 
     implementation(project(":core:domain"))
 }

@@ -32,7 +32,7 @@ class PokemonRemoteMediator(
             }
 
             val response = api.getPokemonList(offset = offset, limit = pageSize)
-            val entities = response.result.map { dto ->
+            val entities = response.results.map { dto ->
                 val id = dto.url.trimEnd('/').substringAfterLast('/').toInt()
                 PokemonEntity(
                     id = id,
