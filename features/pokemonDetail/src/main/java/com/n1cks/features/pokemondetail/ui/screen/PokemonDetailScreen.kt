@@ -9,6 +9,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -27,11 +28,12 @@ fun PokemonDetailScreen(
     component: PokemonDetailComponent
 ) {
     val state by component.state.subscribeAsState()
+    val title = (state as? PokemonDetailState.Success)?.detail?.name ?: "Pokemon"
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = {Text("Pokemon")},
+                title = { Text(title, style = MaterialTheme.typography.titleLarge) },
                 navigationIcon = {
                     IconButton(onClick = component::onBack) {
                         Icon(Icons.Default.ArrowBackIosNew, null)
@@ -42,17 +44,26 @@ fun PokemonDetailScreen(
     ) { paddingValues ->
         when (val s = state) {
             is PokemonDetailState.Loading -> {
-                Box(Modifier.padding(paddingValues).fillMaxSize()) {
+                Box(Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()) {
                     CircularProgressIndicator(Modifier.align(Alignment.Center))
                 }
             }
+
             is PokemonDetailState.Error -> {
-                Box(Modifier.padding(paddingValues).fillMaxSize()) {
+                Box(Modifier
+                    .padding(paddingValues)
+                    .fillMaxSize()) {
                     Text(s.message, Modifier.align(Alignment.Center))
                 }
             }
+
             is PokemonDetailState.Success -> {
-                PokemonDetailContent(pokemon = s.detail)
+                PokemonDetailContent(
+                    pokemon = s.detail,
+                    modifier = Modifier.padding(paddingValues)
+                )
             }
         }
     }
