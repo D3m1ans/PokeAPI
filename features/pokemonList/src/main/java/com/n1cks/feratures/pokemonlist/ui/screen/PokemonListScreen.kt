@@ -14,15 +14,18 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -30,15 +33,18 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemKey
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import coil3.request.crossfade
+import com.arkivanov.decompose.extensions.compose.subscribeAsState
 import com.n1cks.core.domain.model.Pokemon
 import com.n1cks.feratures.pokemonlist.component.PokemonListComponent
 
@@ -49,6 +55,15 @@ fun PokemonListScreen(
 ) {
     val pagingItems = component.pagingData.collectAsLazyPagingItems()
     val favoriteIds by component.favoriteIds.collectAsState(initial = emptySet())
+    val searchQuery by component.searchQuery.subscribeAsState()
+    val filteredItems = remember(pagingItems.itemCount, searchQuery) {
+        (0 until pagingItems.itemCount)
+            .map { pagingItems[it] }
+            .filterNotNull()
+            .filter { pokemon ->
+                searchQuery.isBlank() || pokemon.name.contains(searchQuery, ignoreCase = true)
+            }
+    }
 
     Scaffold(
         topBar = {
@@ -68,22 +83,35 @@ fun PokemonListScreen(
                 .fillMaxSize()
                 .padding(paddingValues),
             contentPadding = PaddingValues(16.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            items(count = pagingItems.itemCount) { index ->
-                val pokemon = pagingItems[index]
-                if (pokemon != null) {
-                    PokemonCard(
-                        pokemon = pokemon,
-                        isFavorite = pokemon.id in favoriteIds,
-                        onClick = { component.onPokemonClick(pokemon.id) },
-                        onToggleFavorite = { component.toggleFavorite(pokemon.id) }
-                    )
-                }
+
+            item {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = component::onSearchQueryChange,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(bottom = 12.dp),
+                    placeholder = { Text("Search Pokemon") },
+                    leadingIcon = { Icon(Icons.Default.Search, contentDescription = null) },
+                    singleLine = true
+                )
+            }
+
+            items(filteredItems, key = { it.id }
+            ) { pokemon ->
+
+                PokemonCard(
+                    pokemon = pokemon,
+                    isFavorite = pokemon.id in favoriteIds,
+                    onClick = { component.onPokemonClick(pokemon.id) },
+                    onToggleFavorite = { component.toggleFavorite(pokemon.id) },
+                    modifier = Modifier.padding(bottom = 8.dp)
+                )
+
             }
         }
     }
-
 }
 
 @Composable
@@ -91,10 +119,11 @@ private fun PokemonCard(
     pokemon: Pokemon,
     isFavorite: Boolean,
     onClick: () -> Unit,
-    onToggleFavorite: () -> Unit
+    onToggleFavorite: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Card(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .clickable(onClick = onClick),
         elevation = CardDefaults.cardElevation(2.dp)

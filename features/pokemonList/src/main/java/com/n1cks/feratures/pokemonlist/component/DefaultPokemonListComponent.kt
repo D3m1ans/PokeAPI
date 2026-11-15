@@ -2,6 +2,8 @@ package com.n1cks.feratures.pokemonlist.component
 
 import androidx.paging.PagingData
 import com.arkivanov.decompose.ComponentContext
+import com.arkivanov.decompose.value.MutableValue
+import com.arkivanov.decompose.value.Value
 import com.arkivanov.essenty.lifecycle.doOnDestroy
 import com.n1cks.core.domain.model.Pokemon
 import com.n1cks.core.domain.usecase.GetFavoritesIdsUseCase
@@ -31,12 +33,19 @@ class DefaultPokemonListComponent(
     override val pagingData: Flow<PagingData<Pokemon>> = getPokemonListUseCase()
     override val favoriteIds: Flow<Set<Int>> = getFavoritesIdsUseCase()
 
+    private val _searchQuery = MutableValue("")
+    override val searchQuery: Value<String> = _searchQuery
+
     override fun toggleFavorite(id: Int) {
         scope.launch { toggleFavoriteUseCase(id) }
     }
 
     override fun onPokemonClick(id: Int) {
         onOpenDetails(id)
+    }
+
+    override fun onSearchQueryChange(query: String) {
+        _searchQuery.value = query
     }
 
 }
